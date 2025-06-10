@@ -19,7 +19,7 @@ folder = '../../data';
 
 %%% choose the desired robot
 [cdpr_parameters, cdpr_variables, cdpr_ws_data ,cdpr_outputs,record,utilities] = ...
- LoadConfigAndInit("IRMA8_diff_pulleys","IRMA8_diff_pulleys");
+ LoadConfigAndInit("IRMA8_ws_analysis","IRMA8_ws_analysis");
 cdpr_variables = UpdateIKZeroOrd([1.78352; 0.197381; -1.28125],...
   [0;0;0],cdpr_parameters,cdpr_variables);
 record.SetFrame(cdpr_variables,cdpr_parameters);%
@@ -28,7 +28,7 @@ record.SetFrame(cdpr_variables,cdpr_parameters);%
 %%% Final design update
 % load("ipanema_grad_opt_ark.mat");
 %%% Selection of force controlled cables
-for cableCoupleIndex=1:1 % Update this till 28 (or 4 for planars)
+for cableCoupleIndex=8:8 % Update this till 28 (or 4 for planars)
     cableComb=nchoosek(1:cdpr_parameters.n_cables,cdpr_parameters.n_cables-cdpr_parameters.pose_dim);
     cablesForceControlled=cableComb(cableCoupleIndex,:);
 
@@ -42,11 +42,20 @@ for cableCoupleIndex=1:1 % Update this till 28 (or 4 for planars)
 
     %%% Accuracy set limits
     for i = 1:cdpr_outputs.counter
-        sigma_threshold=[5 0.5];
+        sigma_threshold=[8 1];
         if (cdpr_outputs.posCardouSens(i)<sigma_threshold(1) && cdpr_outputs.rotCardouSens(i)<sigma_threshold(2))
             cdpr_outputs.kaw(i)=1;
         else
             cdpr_outputs.kaw(i)=0;
+        end
+    end
+
+    %%% Tension distribution sensitivity
+    for i = 1:cdpr_outputs.counter
+        if (cdpr_outputs.teiw(i)<3)
+            cdpr_outputs.teiw(i)=1;
+        else
+            cdpr_outputs.teiw(i)=0;
         end
     end
 

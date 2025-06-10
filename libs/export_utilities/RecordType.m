@@ -38,24 +38,25 @@ classdef RecordType
                 max_x = max_x+0.01;
                 min_x = min_x-0.01;
             end
-            incr_x = 0.2*(max_x - min_x);
+            incr_x = 0.02*(max_x - min_x);
             lim_x = [((min_x-incr_x)*10) ((max_x+incr_x)*10)]./10; 
-            l_x = (lim_x(2)-lim_x(1)); tickSpace_x = l_x/10;
+            l_x = (lim_x(2)-lim_x(1)); tickSpace_x = l_x/6;
             max_y = max(limits(2,:)); min_y = min(limits(2,:));
             if (max_y==min_y)
                 max_y = max_y+0.01;
                 min_y = min_y-0.01;
             end
-            incr_y = 0.2*(max_y - min_y);
-            lim_y = [((min_y-incr_y)*10) ((max_y+incr_y)*10)]./10; l_y = (lim_y(2)-lim_y(1)); tickSpace_y = l_y/10;
+            incr_y = 0.02*(max_y - min_y);
+            lim_y = [((min_y-incr_y)*10) ((max_y+incr_y)*10)]./10; l_y = (lim_y(2)-lim_y(1)); tickSpace_y = l_y/2;
             max_z = max(limits(3,:)); min_z = min(limits(3,:)); 
             if (max_z==min_z)
                 max_z = max_z+0.01;
                 min_z = min_z-0.01;
             end
+            incr_z = 0.02*(max_z - min_z);
             middle_z = (max_z - min_z)/2;
-            max_l = max([lim_x lim_y]); lim_z = [((middle_z-max_l)*15) (abs(max_z)*15)]./10; l_z = (lim_z(2)-lim_z(1));
-            tickSpace_z = l_z/10;
+            max_l = max([lim_x lim_y]); lim_z =[((min_z-incr_z)*10) ((max_z+incr_z)*10)]./10; l_z = (lim_z(2)-lim_z(1));
+            tickSpace_z = l_z/6;
             
             obj.axes_handle = gca; obj.axes_handle.Box = 'Off'; obj.axes_handle.LineWidth = 2;
             obj.axes_handle.XAxisLocation = 'origin'; obj.axes_handle.XLim = lim_x;
@@ -63,7 +64,7 @@ classdef RecordType
             obj.axes_handle.YAxisLocation = 'origin'; obj.axes_handle.ZLim = lim_z;
             obj.axes_handle.ZTick = lim_z(1):tickSpace_z:lim_z(2);   obj.axes_handle.YGrid = 'On';
             obj.axes_handle.YLim = lim_y; obj.axes_handle.YTick = lim_y(1):tickSpace_y:lim_y(2);
-            obj.axes_handle.ZGrid = 'On'; obj.axes_handle.GridLineStyle = '-';%'--'
+            obj.axes_handle.ZGrid = 'On'; obj.axes_handle.GridLineStyle = '--';%'-'
             
             obj.axes_handle.XLabel.String = 'x [m]'; obj.axes_handle.XLabel.FontSize = 16;
             obj.axes_handle.XLabel.FontWeight = 'bold';
@@ -76,7 +77,7 @@ classdef RecordType
             obj.axes_handle.DataAspectRatio= [1;1;1];
             
             if par.pose_dim>3
-                obj.axes_handle.CameraPosition = [-2.837916634960155,-22.911510361523757,13.494156116891816];
+                obj.axes_handle.CameraPosition = [-10,-22,8];
             else 
                 obj.axes_handle.CameraPosition = [0,-1,0];
             end

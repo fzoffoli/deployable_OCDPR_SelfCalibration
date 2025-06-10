@@ -29,14 +29,30 @@ folder = '../../data';
 
 
 % load robot parameters
+% [cdpr_parameters, cdpr_variables, cdpr_ws_data ,cdpr_outputs,record,utilities] = ...
+ % LoadConfigAndInit("IRMA8_diff_pulleys","IRMA8_diff_pulleys");
 [cdpr_parameters, cdpr_variables, cdpr_ws_data ,cdpr_outputs,record,utilities] = ...
- LoadConfigAndInit("IRMA8_diff_pulleys","IRMA8_diff_pulleys");
+ LoadConfigAndInit("IRMA8_ws_analysis","IRMA8_ws_analysis");
  ws_info = LoadWsInfo("8_cable_info");
 
 % graphical visualization
-cdpr_variables = UpdateIKZeroOrd([0;0;0],...
-  [0;0;0],cdpr_parameters,cdpr_variables);
+shown_pose = [-1;0.2;1;pi/45;-pi/45;pi/45];
+cdpr_variables = UpdateIKZeroOrd(shown_pose(1:3),...
+  shown_pose(4:6),cdpr_parameters,cdpr_variables);
 record.SetFrame(cdpr_variables,cdpr_parameters);
+
+% check direct kinematics
+measures.lengths = zeros(cdpr_parameters.n_cables,1);
+measures.swivels = zeros(cdpr_parameters.n_cables,1);
+measures.epsilon = shown_pose(4:6);
+for i = 1:cdpr_parameters.n_cables
+    measures.lengths(i) = cdpr_variables.cable(i).complete_length;
+    measures.swivels(i) = cdpr_variables.cable(i).swivel_ang;
+end
+opts = optimoptions('lsqnonlin','Algorithm','interior-point','SpecifyObjectiveGradient',true,'Display','iter', ...
+            'FunctionTolerance',1e-10,'StepTolerance',1e-10,'OptimalityTolerance',1e-10);
+sol = lsqnonlin(@(pose)CostFunDkLengthSwivelAHRS(cdpr_variables,cdpr_parameters,measures,pose),[0;0;0;0;0;0],[],[],[],[],[],[],[],opts);
+% sol = fsolve(@(pose)CostFunDkLengthSwivelAHRS(cdpr_variables,cdpr_parameters,measures,pose),[0;0;0;0;0;0]);
 
 % JacobiansCheck(cdpr_parameters,cdpr_variables); % fix the tan jac and theta motor jac
 

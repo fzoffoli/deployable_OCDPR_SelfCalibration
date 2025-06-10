@@ -339,19 +339,19 @@ while aa
                 d_tau=20;       % [N]
                 d_l=0.01;       % [m]
                 errComb=permn([1 -1], 8)';
-                for k=1:length(errComb)
-                    err = [errComb(1:6,k).*d_l; errComb(7:8,k).*d_tau];
-                    delta_l=[err(1:6); zeros(2,1)];                               % cable length measure error
-                    delta_tau_c=err(7:8);                                         % cable tension measure error
-                    % [out.sigmaTauL(out.counter),tauP_dl,~,dJ_ort]=InputRatioIndex(cdpr_v,cdpr_p,cableIdx,Jd,Jc,tau_c',delta_l);
-                    % out.flag = TensionErrorInsensWS_2dor(cdpr_p,ws_info,fp,tauP_dl,N,dJ_ort,delta_tau_c,delta_l);  
-                    % out.teiw(out.counter)=CableInterfPerreault(cdpr_v,cdpr_p);          %soft-case scenario
-                    out.teiw(out.counter)=0;
+                % for k=1:length(errComb)
+                %     err = [errComb(1:6,k).*d_l; errComb(7:8,k).*d_tau];
+                %     delta_l=[err(1:6); zeros(2,1)];                               % cable length measure error
+                %     delta_tau_c=err(7:8);                                         % cable tension measure error
+                %     [out.sigmaTauL(out.counter),tauP_dl,~,dJ_ort]=InputRatioIndex(cdpr_v,cdpr_p,cableIdx,Jd,Jc,tau_c',delta_l);
+                %     out.flag = TensionErrorInsensWS_2dor(cdpr_p,ws_info,fp,tauP_dl,N,dJ_ort,delta_tau_c,delta_l);  
+                %     out.teiw(out.counter)=out.teiw(out.counter)*out.flag;          %soft-case scenario
+                    out.teiw(out.counter)=norm(-Jd\Jc,inf);
 %                     out.teiw(out.counter)=out.teiw(out.counter)*WrenchFeasibleErrorInsensitive(cdpr_p,ws_info,fp,tauP_dl,N,dJ_ort,delta_tau_c,delta_l);   %worst-case scenario
-                    if out.teiw(out.counter)==0
-                        break
-                    end
-                end
+                    % if out.teiw(out.counter)==0
+                        % break
+                    % end
+                % end
                 [out.rotCardouSens(out.counter), out.posCardouSens(out.counter)]=SensCardou(Jd'*cdpr_v.D_mat,'inf');
                 out.J_ort_cond(out.counter)=rcond(N'*N);  %only to check the condition number of the jacobian during the ws characterization
                 %
